@@ -7,6 +7,9 @@ use App\User;
 
 class Reply extends Model
 {
+    protected$fillable = ['user_id', 'question_id', 'body'];
+    // protected $gaurded = [];
+
     public function question()
     {
         return $this->belongsTo(Question::class);
