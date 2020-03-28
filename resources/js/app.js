@@ -1,6 +1,6 @@
 require('./bootstrap');
 
-// window.Vue = require('vue');
+window.Vue = require('vue');
 
 import Vue from 'vue'
 import Vuetify from 'vuetify'
@@ -9,8 +9,8 @@ Vue.use(Vuetify)
 
 import User from './Helpers/User'
 window.User = User;
-console.log(User.id())
-//User.id()
+
+window.EventBus = new Vue();
 
 Vue.component('app-home', require('./components/AppHome.vue').default);
 

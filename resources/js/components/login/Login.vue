@@ -12,10 +12,11 @@
                                 <v-text-field v-model="form.email" type="email" label="E-mail" required autocomplete="off"></v-text-field>
                                 <v-text-field v-model="form.password" type="password" label="Item" required></v-text-field>
 
-                                <v-card-actions>
-                                    <v-spacer />
-                                    <v-btn color="primary" type="submit">Login</v-btn>
-                                </v-card-actions>
+                                <v-btn color="primary" type="submit">Login</v-btn>
+                                <router-link to="/register" class="routerLink">
+                                    <v-btn text>Create An Account?</v-btn>
+                                </router-link>
+                                
                             </v-form>
                         </v-card-text>
                     </v-card>
@@ -36,14 +37,27 @@
             }
         },
 
+        created() {
+            if(User.loggedIn()) {
+                this.$router.push({name: 'forum'})
+            }
+        },
+
         methods: {
             login() {
                 User.login(this.form)
+                // this.$router.push({name: 'forum'})
             }
         },
     }
 </script>
 
 <style scoped>
+    .routerLink{
+        text-decoration: none;
+    }
 
+    .routerLink:hover{
+        text-decoration: underline;
+    }
 </style>
