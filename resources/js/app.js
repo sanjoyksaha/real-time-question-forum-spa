@@ -7,6 +7,11 @@ import Vuetify from 'vuetify'
 
 Vue.use(Vuetify)
 
+import User from './Helpers/User'
+window.User = User;
+console.log(User.id())
+//User.id()
+
 Vue.component('app-home', require('./components/AppHome.vue').default);
 
 import router from './Router/router'
