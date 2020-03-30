@@ -21,7 +21,7 @@
 			return {
 				items: [
 					{title:'Forum', to:'/forum', show:true},
-					{title:'Ask Questions', to:'/questions', show: User.loggedIn()},
+					{title:'Ask Questions', to:'/ask-questions', show: User.loggedIn()},
 					{title:'Category', to:'/category', show: User.loggedIn()},
 					{title:'LogIn', to:'/login', show: !User.loggedIn()},
 					{title:'LogOut', to:'/logout', show: User.loggedIn()},
