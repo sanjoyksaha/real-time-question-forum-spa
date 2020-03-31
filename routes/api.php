@@ -21,8 +21,8 @@ Route::apiResource('/question', 'QuestionController');
 Route::apiResource('/category', 'CategoryController');
 Route::apiResource('/question/{question}/reply', 'ReplyController');
 
-Route::post('/{reply}/like', 'LikeController@like');
-Route::delete('/{reply}/like', 'LikeController@unlike');
+Route::post('/like/{reply}', 'LikeController@like');
+Route::delete('/like/{reply}', 'LikeController@unlike');
 
 Route::group([
 
