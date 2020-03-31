@@ -7,8 +7,8 @@
 
 			<v-spacer></v-spacer>
 			
-			<router-link v-for="item in items" :key="item.title" :to="item.to" v-if="item.show">
-				<v-btn text>{{item.title}}</v-btn>
+			<router-link v-for="item in items" :key="item.title" :to="item.to">
+				<v-btn text v-if="item.show">{{item.title}}</v-btn>
 			</router-link>
 			
     	</v-toolbar>
@@ -22,10 +22,10 @@
 				items: [
 					{title:'Forum', to:'/forum', show:true},
 					{title:'Ask Questions', to:'/ask-questions', show: User.loggedIn()},
-					{title:'Category', to:'/category', show: User.loggedIn()},
+					{title:'Category', to:'/category', show: User.loggedIn() && User.admin()},
 					{title:'LogIn', to:'/login', show: !User.loggedIn()},
 					{title:'LogOut', to:'/logout', show: User.loggedIn()},
-				]
+				],
 			}
 		},
 		  

@@ -5,13 +5,19 @@
                 <v-card-title class="headline">
                     {{data.title}}
                     <v-spacer></v-spacer>
-                    <v-btn color="error">5 replies</v-btn>
+                    <v-btn color="error">{{data.reply_count}} replies</v-btn>
+                    <router-link :to="`/forum`" class="ml-2">
+                        <v-btn color="light-blue">Back</v-btn>
+                    </router-link>
                 </v-card-title>
                     
                 <v-card-subtitle class="pb-0" color="grey">{{data.user}} said {{data.created_at}}</v-card-subtitle>
                     
                 <v-card-text v-html="body" class="my-5 text--primary"></v-card-text>
 
+                <!-- <v-card-action>
+                    
+                </v-card-action> -->
                 <v-card-actions v-if="own">
                     <v-btn icon @click="edit">
                         <v-icon color="teal">mdi-pencil</v-icon>

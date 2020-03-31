@@ -12,6 +12,8 @@ class Category extends Model
     {
         return "slug";
     }
+    
+    protected $with = ['questions'];
 
     public function questions()
     {

@@ -19,6 +19,8 @@ class Question extends Model
         return "slug";
     }
 
+    protected $with = ['replies'];
+
     public function user()
     {
         return $this->belongsTo(User::class);

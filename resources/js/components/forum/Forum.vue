@@ -6,11 +6,7 @@
                     <question v-for="question in questions" :key="question.path" :question=question></question>
                 </v-col>
                 <v-col cols="12" sm="4" md="4">
-                    <v-card class="elevation-12">
-                        <v-card-title>Category</v-card-title>
-                        <v-card-text>
-                        </v-card-text>
-                    </v-card>
+                    <forum-sidebar></forum-sidebar>
                 </v-col>   
              </v-row>
         </v-container>
@@ -19,10 +15,11 @@
 
 <script>
 
-    import question from './Question'
+    import Question from './Question'
+    import ForumSidebar from './ForumSidebar'
     export default {
         components: {
-            question,
+            Question, ForumSidebar,
         },
 
         data() {
@@ -36,9 +33,8 @@
                 .then(res => {
                     this.questions = res.data.data
                 })
-                
                 .catch(error => console.log(error.response.data))
-        }
+        },
     }
 </script>
 
