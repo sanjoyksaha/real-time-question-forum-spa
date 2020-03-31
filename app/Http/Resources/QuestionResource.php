@@ -19,7 +19,7 @@ class QuestionResource extends JsonResource
             'slug' => $this->slug,
             'path' => $this->path,
             'body' => $this->body,
-            'replies' => $this->replies,
+            'replies' => ReplyResource::collection($this->replies),
             'reply_count' => $this->replies->count(),
             'created_at' => $this->created_at->diffForHumans(),
             // 'category' => $this->category->name,

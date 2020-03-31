@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ReplyRequest;
 use App\Http\Resources\ReplyResource;
 use App\Model\Question;
 use App\Model\Reply;
@@ -33,11 +34,11 @@ class ReplyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Question $question, Request $request)
+    public function store(Question $question, ReplyRequest $request)
     {
-        $question->replies()->create($request->all());
+        $reply = $question->replies()->create($request->all());
 
-        return response("Replied Successfully.", Response::HTTP_OK);
+        return response(['reply' => new ReplyResource($reply)], Response::HTTP_OK);
     }
 
     /**
