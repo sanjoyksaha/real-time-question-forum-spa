@@ -38,9 +38,18 @@
 
         data() {
             return {
-                own: User.own(this.data.user_id)
+                own: User.own(this.data.user_id),
+                //reply_count: this.data.reply_count,
             }
         },
+
+        // created() {
+        //     Echo.private('App.User.' + User.id())
+        //         .notification((notification) => {
+        //             // this.data.unshift(notification);
+        //             this.reply_count ++;
+        //         });
+        // },
 
         computed: {
             body() {
