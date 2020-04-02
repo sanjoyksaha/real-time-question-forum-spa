@@ -3,7 +3,13 @@
         <edit-question v-if="editing" :data=question></edit-question>
         <show-question v-else :data=question></show-question>
         <replies :question="question"></replies>
-        <new-reply :qReply="question.slug"></new-reply>
+        
+        <v-container>
+            <new-reply :qReply="question.slug" v-if="loggedIn"></new-reply>
+            <router-link :to="`/login`" v-else>
+                <v-btn class="primary">Login To Reply</v-btn>   
+            </router-link>
+        </v-container>
         
     </div>
 </template>
@@ -22,6 +28,12 @@
             return {
                 question: null,
                 editing: false,
+            }
+        },
+
+        computed: {
+            loggedIn() {
+                return User.loggedIn();
             }
         },
 

@@ -56,13 +56,13 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if($exception instanceof TokenBlacklistedException) {
-            return response(['error' => 'Tokon can not be used, try new one'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response(['error' => 'Token can not be used, try new one'], Response::HTTP_BAD_REQUEST);
         } elseif($exception instanceof TokenInvalidException) {
-            return response(['error' => 'Tokon is Invaild'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response(['error' => 'Token is Invaild'], Response::HTTP_BAD_REQUEST);
         } elseif($exception instanceof TokenExpiredException) {
-            return response(['error' => 'Tokon is Expired'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response(['error' => 'Token is Expired'], Response::HTTP_BAD_REQUEST);
         } elseif($exception instanceof JWTException) {
-            return response(['error' => 'Tokon is not provided'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response(['error' => 'Token is not provided'], Response::HTTP_BAD_REQUEST);
         }
         return parent::render($request, $exception);
     }

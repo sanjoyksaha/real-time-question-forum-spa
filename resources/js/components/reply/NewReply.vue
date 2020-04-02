@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-container>
+        <!-- <v-container> -->
             <v-card class="elevation-4">
                 <v-card-text>
                     <vue-simplemde v-model="body" ref="markdownEditor" />
@@ -10,7 +10,7 @@
                     <v-btn class="deep-orange ml-2" @click="submit">Reply</v-btn>
                 </v-card-actions>
             </v-card>
-        </v-container>
+        <!-- </v-container> -->
     </div>
 </template>
 

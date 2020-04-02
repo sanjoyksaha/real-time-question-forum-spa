@@ -2019,12 +2019,11 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       axios.post('/api/notifications').then(function (res) {
-        //console.log( res.data.unread)
         _this2.read = res.data.read;
         _this2.unread = res.data.unread;
         _this2.unreadCount = res.data.unread.length;
       })["catch"](function (error) {
-        return console.log(error.response.data);
+        return Exception.handle(error);
       });
     },
     markRead: function markRead(notification) {
@@ -2557,17 +2556,26 @@ __webpack_require__.r(__webpack_exports__);
   props: ['data'],
   data: function data() {
     return {
-      own: User.own(this.data.user_id) //reply_count: this.data.reply_count,
-
+      own: User.own(this.data.user_id),
+      reply_count: this.data.reply_count
     };
   },
-  // created() {
-  //     Echo.private('App.User.' + User.id())
-  //         .notification((notification) => {
-  //             // this.data.unshift(notification);
-  //             this.reply_count ++;
-  //         });
-  // },
+  created: function created() {
+    var _this = this;
+
+    EventBus.$on('newReply', function () {
+      _this.reply_count++;
+    });
+    Echo["private"]('App.User.' + User.id()).notification(function (notification) {
+      _this.reply_count++;
+    });
+    EventBus.$on('deleteReply', function () {
+      _this.reply_count--;
+    });
+    Echo.channel('deleteReplyChannel').listen('DeleteReplyEvent', function (e) {
+      _this.reply_count--;
+    });
+  },
   computed: {
     body: function body() {
       return md.parse(this.data.body);
@@ -2578,10 +2586,10 @@ __webpack_require__.r(__webpack_exports__);
       EventBus.$emit('startEditing');
     },
     destroy: function destroy() {
-      var _this = this;
+      var _this2 = this;
 
       axios["delete"]("/api/question/".concat(this.data.slug)).then(function (res) {
-        return _this.$router.push("/forum");
+        return _this2.$router.push("/forum");
       })["catch"](function (error) {
         return console.log(error.response.data);
       });
@@ -2614,6 +2622,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2630,6 +2644,11 @@ __webpack_require__.r(__webpack_exports__);
       question: null,
       editing: false
     };
+  },
+  computed: {
+    loggedIn: function loggedIn() {
+      return User.loggedIn();
+    }
   },
   created: function created() {
     this.listen();
@@ -67418,7 +67437,7 @@ var render = function() {
                   _c("v-spacer"),
                   _vm._v(" "),
                   _c("v-btn", { attrs: { color: "error" } }, [
-                    _vm._v(_vm._s(_vm.data.reply_count) + " replies")
+                    _vm._v(_vm._s(_vm.reply_count) + " replies")
                   ]),
                   _vm._v(" "),
                   _c(
@@ -67523,7 +67542,24 @@ var render = function() {
           _vm._v(" "),
           _c("replies", { attrs: { question: _vm.question } }),
           _vm._v(" "),
-          _c("new-reply", { attrs: { qReply: _vm.question.slug } })
+          _c(
+            "v-container",
+            [
+              _vm.loggedIn
+                ? _c("new-reply", { attrs: { qReply: _vm.question.slug } })
+                : _c(
+                    "router-link",
+                    { attrs: { to: "/login" } },
+                    [
+                      _c("v-btn", { staticClass: "primary" }, [
+                        _vm._v("Login To Reply")
+                      ])
+                    ],
+                    1
+                  )
+            ],
+            1
+          )
         ],
         1
       )
@@ -67829,48 +67865,39 @@ var render = function() {
     "div",
     [
       _c(
-        "v-container",
+        "v-card",
+        { staticClass: "elevation-4" },
         [
           _c(
-            "v-card",
-            { staticClass: "elevation-4" },
+            "v-card-text",
+            [
+              _c("vue-simplemde", {
+                ref: "markdownEditor",
+                model: {
+                  value: _vm.body,
+                  callback: function($$v) {
+                    _vm.body = $$v
+                  },
+                  expression: "body"
+                }
+              }),
+              _vm._v(" "),
+              _vm.errors.body
+                ? _c("span", { staticClass: "red--text" }, [
+                    _vm._v(_vm._s(_vm.errors.body[0]))
+                  ])
+                : _vm._e()
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-card-actions",
             [
               _c(
-                "v-card-text",
-                [
-                  _c("vue-simplemde", {
-                    ref: "markdownEditor",
-                    model: {
-                      value: _vm.body,
-                      callback: function($$v) {
-                        _vm.body = $$v
-                      },
-                      expression: "body"
-                    }
-                  }),
-                  _vm._v(" "),
-                  _vm.errors.body
-                    ? _c("span", { staticClass: "red--text" }, [
-                        _vm._v(_vm._s(_vm.errors.body[0]))
-                      ])
-                    : _vm._e()
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-card-actions",
-                [
-                  _c(
-                    "v-btn",
-                    {
-                      staticClass: "deep-orange ml-2",
-                      on: { click: _vm.submit }
-                    },
-                    [_vm._v("Reply")]
-                  )
-                ],
-                1
+                "v-btn",
+                { staticClass: "deep-orange ml-2", on: { click: _vm.submit } },
+                [_vm._v("Reply")]
               )
             ],
             1
@@ -124990,6 +125017,50 @@ var AppStorage = /*#__PURE__*/function () {
 
 /***/ }),
 
+/***/ "./resources/js/Helpers/Exception.js":
+/*!*******************************************!*\
+  !*** ./resources/js/Helpers/Exception.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _User__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./User */ "./resources/js/Helpers/User.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Exception = /*#__PURE__*/function () {
+  function Exception() {
+    _classCallCheck(this, Exception);
+  }
+
+  _createClass(Exception, [{
+    key: "handle",
+    value: function handle(error) {
+      this.isExpired(error.response.data.error);
+    }
+  }, {
+    key: "isExpired",
+    value: function isExpired(error) {
+      if (error == 'Token is Expired') {
+        _User__WEBPACK_IMPORTED_MODULE_0__["default"].logOut();
+      }
+    }
+  }]);
+
+  return Exception;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (Exception = new Exception());
+
+/***/ }),
+
 /***/ "./resources/js/Helpers/Token.js":
 /*!***************************************!*\
   !*** ./resources/js/Helpers/Token.js ***!
@@ -125024,23 +125095,27 @@ var Token = /*#__PURE__*/function () {
   }, {
     key: "payload",
     value: function payload(token) {
-      var payload = token.split(".")[1];
+      var payload = token.split('.')[1];
       return this.decode(payload);
     }
   }, {
     key: "decode",
     value: function decode(payload) {
-      //if(this.isBase64(payload)){
-      return JSON.parse(atob(payload)); //}
-    } // isBase64(str){
-    //     try{
-    //         return btoa(atob(str)).replace(/=/g,"") == str
-    //     }
-    //     catch(err){
-    //         return false
-    //     }
-    // }
+      if (this.isBase64(payload)) {
+        return JSON.parse(atob(payload));
+      }
 
+      return false;
+    }
+  }, {
+    key: "isBase64",
+    value: function isBase64(str) {
+      try {
+        return btoa(atob(str)).replace(/=/g, "") == str;
+      } catch (err) {
+        return false;
+      }
+    }
   }]);
 
   return Token;
@@ -125106,7 +125181,7 @@ var User = /*#__PURE__*/function () {
       var storedToken = _AppStorage__WEBPACK_IMPORTED_MODULE_1__["default"].getToken();
 
       if (storedToken) {
-        return _Token__WEBPACK_IMPORTED_MODULE_0__["default"].isValid(storedToken) ? true : false;
+        return _Token__WEBPACK_IMPORTED_MODULE_0__["default"].isValid(storedToken) ? true : this.logOut();
       }
 
       return false;
@@ -125241,7 +125316,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! marked */ "./node_modules/marked/src/marked.js");
 /* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(marked__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _Helpers_User__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Helpers/User */ "./resources/js/Helpers/User.js");
-/* harmony import */ var _Router_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Router/router */ "./resources/js/Router/router.js");
+/* harmony import */ var _Helpers_Exception__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Helpers/Exception */ "./resources/js/Helpers/Exception.js");
+/* harmony import */ var _Router_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Router/router */ "./resources/js/Router/router.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js"); // window.Vue = require('vue');
 
 
@@ -125256,7 +125332,9 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('vue-simplemde', vue_simple
 window.md = marked__WEBPACK_IMPORTED_MODULE_3___default.a; //Import helper class
 
 
-window.User = _Helpers_User__WEBPACK_IMPORTED_MODULE_4__["default"]; //Global EventBus
+window.User = _Helpers_User__WEBPACK_IMPORTED_MODULE_4__["default"];
+
+window.Exception = _Helpers_Exception__WEBPACK_IMPORTED_MODULE_5__["default"]; //Global EventBus
 
 window.EventBus = new vue__WEBPACK_IMPORTED_MODULE_0___default.a(); //Default Component
 
@@ -125266,7 +125344,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('app-home', __webpack_requi
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: '#app',
   vuetify: new vuetify__WEBPACK_IMPORTED_MODULE_1___default.a(),
-  router: _Router_router__WEBPACK_IMPORTED_MODULE_5__["default"]
+  router: _Router_router__WEBPACK_IMPORTED_MODULE_6__["default"]
 });
 
 /***/ }),

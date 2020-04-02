@@ -55,12 +55,11 @@ export default {
         getNotifications() {
             axios.post('/api/notifications')
                 .then(res => {
-                    //console.log( res.data.unread)
                     this.read = res.data.read;
                     this.unread = res.data.unread;
                     this.unreadCount = res.data.unread.length;
                 })
-                .catch(error => console.log(error.response.data))
+                .catch(error => Exception.handle(error))
         },
 
         markRead(notification) {

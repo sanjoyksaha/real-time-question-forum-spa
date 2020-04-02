@@ -5,7 +5,7 @@
                 <v-card-title class="headline">
                     {{data.title}}
                     <v-spacer></v-spacer>
-                    <v-btn color="error">{{data.reply_count}} replies</v-btn>
+                    <v-btn color="error">{{reply_count}} replies</v-btn>
                     <router-link :to="`/forum`" class="ml-2">
                         <v-btn color="light-blue">Back</v-btn>
                     </router-link>
@@ -39,17 +39,29 @@
         data() {
             return {
                 own: User.own(this.data.user_id),
-                //reply_count: this.data.reply_count,
+                reply_count: this.data.reply_count,
             }
         },
 
-        // created() {
-        //     Echo.private('App.User.' + User.id())
-        //         .notification((notification) => {
-        //             // this.data.unshift(notification);
-        //             this.reply_count ++;
-        //         });
-        // },
+        created() {
+            EventBus.$on('newReply', () => {
+                this.reply_count++;
+            })
+
+            Echo.private('App.User.' + User.id())
+                .notification((notification) => {
+                    this.reply_count++;
+                });
+
+            EventBus.$on('deleteReply', () => {
+                this.reply_count--;
+            })
+
+            Echo.channel('deleteReplyChannel')
+                .listen('DeleteReplyEvent', (e) => {
+                    this.reply_count--;
+                })
+        },
 
         computed: {
             body() {
