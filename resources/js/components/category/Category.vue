@@ -55,13 +55,15 @@ export default {
             errors: {},
             categories: {},
             editSlug: false,
+            //loggedIn: User.loggedIn(),
         }
     },
 
     created() {
-        if(!User.admin()) {
-            this.$router.push('/forum')
+        if(!User.loggedIn()) {
+            this.$router.push('/login')
         }
+
         axios.get('/api/category')
             .then(res => this.categories = res.data.data)
     },

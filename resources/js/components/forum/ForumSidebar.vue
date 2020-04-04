@@ -3,9 +3,9 @@
         <v-toolbar color="pink" dark>
             <v-toolbar-title>Category</v-toolbar-title>
         </v-toolbar>
-        <v-list rounded>
+        <v-list rounded class="primary--text">
             <!-- <v-subheader>REPORTS</v-subheader> -->
-            <v-list-item-group v-if="categories">
+            <v-list-item-group v-if="categories" >
                 <v-list-item v-for="category in categories" :key="category.slug"  >
                     <v-list-item-content>
                         <v-list-item-title>{{category.name}} ({{category.question_count}})</v-list-item-title>

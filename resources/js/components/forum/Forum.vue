@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-container fluid grid-list-md>
+        <v-container fluid grid-list-md class="mb-5">
              <v-row>
                 <v-col cols="12" sm="8" md="8">
                     <question v-for="question in questions" :key="question.path" :question=question></question>
@@ -17,6 +17,7 @@
 
     import Question from './Question'
     import ForumSidebar from './ForumSidebar'
+    // import Parallex from '../parallex'
     export default {
         components: {
             Question, ForumSidebar,

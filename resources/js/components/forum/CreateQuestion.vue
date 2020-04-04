@@ -7,11 +7,11 @@
                     <v-form @submit.prevent="create">
 
                         <v-autocomplete  v-model="form.category_id" :items="categories" item-text="name" item-value="id" label="Category"></v-autocomplete>
-
+                        <span class="red--text" v-if="errors.category_id">{{errors.category_id[0]}}</span>
                         <v-text-field v-model="form.title" type="text" label="Title" required autocomplete="off"></v-text-field>
-
+                        <span class="red--text" v-if="errors.title">{{errors.title[0]}}</span>
                         <vue-simplemde v-model="form.body" ref="markdownEditor" />
-
+                        <span class="red--text" v-if="errors.body">{{errors.body[0]}}</span>
                         <v-card-actions>
                             <v-btn color="primary" type="submit">Create</v-btn>
                         </v-card-actions>
@@ -38,6 +38,9 @@
         },
 
         created() {
+            if(!User.loggedIn()) {
+                this.$router.push('/login')
+            }
             axios.get('/api/category')
                 .then(res => this.categories = res.data.data)
         },
@@ -48,7 +51,7 @@
                     .then(res => {
                         this.$router.push(res.data.path)
                     })
-                    .catch(error => this.errors = error.response.data.error)
+                    .catch(error => this.errors = error.response.data.errors)
             }
         }
     }
